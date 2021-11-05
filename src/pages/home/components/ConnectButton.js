@@ -6,7 +6,7 @@ import {colors} from "../../../utils/colors";
 import TruncateAddress from "../../../utils/TruncateAddress";
 
 import {injected} from "../../../utils/connectors";
-import { ethers } from "ethers";
+import { ethers, getSigner } from "ethers";
 import {useWeb3React} from "@web3-react/core";
 
 export const ConnectButtonNav = styled(Button)`
@@ -27,22 +27,26 @@ export const ConnectButtonNav = styled(Button)`
 `
 
 const ConnectButton =  () => {
-    const { active, account, library, connector, activate, deactivate } = useWeb3React();
-    console.log(account)
+    const { active, account, library, connector, provider, activate, deactivate } = useWeb3React();
     
 
-    const shortie = TruncateAddress(account)
+    const shortie = TruncateAddress(account);
     
   
-    const handleConnect = async () => {
-      // read-only
-      try {await activate(injected)} catch (err) {console.log(err)};
+    const handleConnect = async (connector) => {
+      // read-only https://rpc-mainnet.maticvigil.com/v1/4b331c188697971af1cd6f05bb7065bc358b7e89
+
+      try {
+          let ethersProvider = new ethers.providers.JsonRpcProvider("https://rpc-mainnet.maticvigil.com/v1/4b331c188697971af1cd6f05bb7065bc358b7e89");
+          await activate(connector);
+          
+        } catch (err) {console.log(err)};
       
     }
 
     const handleDisconnect = async () => {
         try {
-            deactivate(injected)
+            deactivate(injected);
         } catch (err) {console.log(err)}
     }
 
@@ -52,9 +56,9 @@ const ConnectButton =  () => {
 
 
         { !active ? 
-        <ConnectButtonNav onClick={() => handleConnect()} >Connect</ConnectButtonNav>
+        <ConnectButtonNav onClick={() => handleConnect(injected)} >Connect</ConnectButtonNav>
         :
-        <ConnectButtonNav onClick={() => handleDisconnect()} >{shortie}</ConnectButtonNav>
+        <ConnectButtonNav library={library} onClick={() => handleDisconnect()} >{shortie}</ConnectButtonNav>
 
         }
 

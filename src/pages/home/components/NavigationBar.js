@@ -52,18 +52,16 @@ export const NavLink = styled(NavItem)`
   padding-right: 3px;
 `
 
-const NavBar = () => {
+const NavBar = (props) => {
 
 
     return (
         <>
         <NavigationBar>
             <NavigationContainer>
-        
-                <NavLogo>Corn Finance</NavLogo>
-                <NavLink>Hello</NavLink>
-                <NavLink>About</NavLink>
-                <ConnectButton></ConnectButton>
+                {props.children}
+
+                
                 
             </NavigationContainer>
         

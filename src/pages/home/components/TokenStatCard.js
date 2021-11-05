@@ -1,9 +1,20 @@
-import React from 'react';
+import React, {useState, useEffect } from 'react';
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import CardHeader from "react-bootstrap/CardHeader";
 import Container from "react-bootstrap/Container";
 import {colors} from "../../../utils/colors";
+
+import {injected} from "../../../utils/connectors";
+import { ethers } from "ethers";
+import {useWeb3React} from "@web3-react/core";
+
+import {useContract, useSigner} from "../../../config/chef"
+import {MasterChefV2} from "../../../config/artifacts/MasterChefV2"
+import {CobToken} from "../../../config/artifacts/CobToken"
+import {ERC20Abi} from "../../../config/abi"
+import { contractAddresses } from "../../../config/addresses";
+import {readCobTokenData} from "../../../utils/ethersScripts"
 
 const TokenCardContainer = styled(Container)`
     display: flex;
@@ -14,7 +25,7 @@ const TokenCardContainer = styled(Container)`
 
 const TokenCard = styled(Card)`
     align-items: center;
-    height: 200px;
+    height: 300px;
     width: 489px;
     background-color: ${colors.green} !important;
     padding: 12px;
@@ -52,22 +63,67 @@ const Information = styled.p`
 `
 
 const TokenStatCard = () => {
-    return (
-        <>
-        <TokenCardContainer>
-           <TokenCard>
-            <TokenCardTitle>Cob Token Statistics</TokenCardTitle>
-            <TokenCardBodyContentContainer>
-                <TokenCardBody>
-                    <Information>23535</Information>
-                    <Information>435345435</Information>
-                    <Information>4354545</Information>
-                </TokenCardBody>
-            </TokenCardBodyContentContainer>
-           </TokenCard>
-        </TokenCardContainer>
-        </>
-    )
+
+    const { active, account, library, connector} = useWeb3React();
+    const [cobToken, setCobToken] =  useState(0)
+
+    //const contract = useContract(contractAddresses.CobToken, ERC20Abi, library.getSigner())
+    useEffect( async () => {
+        if (active) {
+          const cobData = readCobTokenData(active, library.getSigner(), account)
+          .then( value => setCobToken(value))
+          console.log(cobData)
+        } else {
+          const noCobData = setCobToken(0)
+        }
+        
+        
+      }, [account])
+
+
+
+
+    if (active) {
+        return (
+            <>
+            <TokenCardContainer>
+               <TokenCard>
+                <TokenCardTitle>Cob Token Statistics</TokenCardTitle>
+                <TokenCardBodyContentContainer>
+                    <TokenCardBody>
+                        <Information>Max Supply:  {cobToken[1]}</Information>
+                        <Information>Circulating Supply: {cobToken[1]}</Information>
+                        <Information>Current Balance: {cobToken[0]} </Information>
+                        <Information>Emission Rate: 2 COB/block</Information>
+                    </TokenCardBody>
+                </TokenCardBodyContentContainer>
+               </TokenCard>
+            </TokenCardContainer>
+            </>
+        )
+    }
+
+    if (!active) {
+        return (
+            <>
+            <TokenCardContainer>
+               <TokenCard>
+                <TokenCardTitle>Cob Token Statistics</TokenCardTitle>
+                <TokenCardBodyContentContainer>
+                    <TokenCardBody>
+                        <Information>Max Supply:  </Information>
+                        <Information>Circulating Supply: </Information>
+                        <Information>Current Balance:  </Information>
+                        <Information>Emission Rate:</Information>
+                        <Information>Please Connect Wallet for Data</Information>
+                    </TokenCardBody>
+                </TokenCardBodyContentContainer>
+               </TokenCard>
+            </TokenCardContainer>
+            </>
+        )
+    }
+
 }
 
 export default TokenStatCard

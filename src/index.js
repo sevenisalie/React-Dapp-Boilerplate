@@ -1,16 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Web3ReactProvider } from "@web3-react/core";
+import { ethers } from "ethers";
+import {useWeb3React} from "@web3-react/core";
 
-
+const getLibrary = (provider, connector) => {
+  return new ethers.providers.Web3Provider(provider)
+};
 
 ReactDOM.render(
-  
+  <Web3ReactProvider getLibrary={getLibrary}>
   <React.StrictMode>
       <App />
-  </React.StrictMode>,
+  </React.StrictMode>
+  </Web3ReactProvider>,
   document.getElementById('root')
 );
 

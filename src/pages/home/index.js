@@ -1,25 +1,27 @@
 import React, {useEffect, useState} from 'react'
 import styled from "styled-components"
+import axios from "axios"
+import {injected} from "../../utils/connectors";
+import { ethers } from "ethers";
+import {useWeb3React} from "@web3-react/core";
+
+import {ERC20Abi} from "../../config/abi"
+import {contractAddresses} from "../../config/addresses"
+
 import Button from "react-bootstrap/Button";
 import cornlogo from "../../images/cornlogo.jpg"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {Page} from "../../components/layout/Page";
-
 import HeaderImage from "./components/HeaderImage";
 import HeadingText from "./components/HeadingText";
 import TokenStatCard from "./components/TokenStatCard";
 import StakingInstructions from "./components/StakingInstructions";
 import PoolCard from "./components/PoolCard"
-import NavigationBar from "./components/NavigationBar";
-import NavLink from "./components/NavigationBar";
-import NavLogo from "./components/NavigationBar";
-import ConnectButtonNav from "./components/ConnectButton";
-import {injected} from "../../utils/connectors";
-import { ethers } from "ethers";
-import {useWeb3React} from "@web3-react/core";
-import ConnectButton from './components/ConnectButton';
+
+import {useSigner} from "../../config/chef"
+import useContract from "../../hooks/useActiveWeb3React"
 
 
 const FlexOne = styled.div`
@@ -54,16 +56,11 @@ const FlexThree = styled.div`
 
 const Home = () => {
     const { active, account, library, connector} = useWeb3React();
-    console.log(library)
-    // const provider = new ethers.providers.Web3Provider(connector)
-    let signer = null
-    if (active) {
-        signer = library.getSigner()
-    }
-    console.log(signer)
+    //const cobContract = useContract(contractAddresses.CobToken, ERC20Abi)
+    
     
 
-    console.log(account)
+    
     return (
         <>
         <Page>
